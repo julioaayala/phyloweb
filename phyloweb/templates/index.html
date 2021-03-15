@@ -1,0 +1,277 @@
+<DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.6.0/dist/umd/popper.min.js" integrity="sha384-KsvD1yqQ1/1+IA7gi3P0tyJcT3vR+NdBTt13hSJ2lnve8agRGXTTyNaBYmCR/Nwi" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.min.js" integrity="sha384-nsg8ua9HAw1y0W1btsyWgBklPnCUAFLuTMS2G72MMONqmOymq585AcH49TLBQObG" crossorigin="anonymous"></script>
+
+    <title>Phyloweb - Step 1</title>
+  </head>
+  <body>
+    <header>
+      <nav class="navbar navbar-expand-lg navbar-light m-3">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="container-fluid">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item ">
+              <a class="nav-link" target="_blank" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" target="_blank" href="/software">Software used</a>
+            </li>
+          </ul>
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link" target="_blank" href="https://github.com/julioaayala/phyloweb">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16">
+                  <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+                </svg> Project repo
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </header>
+    <main role="main" class="container">
+      <h2>Phylogeny inference based on accession numbers</h2>
+      <div class="container-sm">
+        <!-- Form for sequence retrieval -->
+        <form id="accession" method="post">
+          <div class="row m-4">
+            <h4>1. Get sequences</h4>
+            <p>Input a list of accession numbers, separated by lines or semicolons (;)</p>
+          </div>
+          <div class="row m-4">
+            <div class="col">
+              <textarea class="form-control" id="accessionNumbers" name="accessionNumbers" placeholder="List of accession numbers" rows="10"></textarea>
+            </div>
+          </div>
+          <div class="row m-4">
+            <div class="col-4">
+              <select class="form-control" name="seqtype" id="seqtype">
+                <option value="nucleotide">Nucleotide</option>
+                <option value="protein" selected>Protein</option>
+              </select>
+            </div>
+            <div class="col form-check">
+              <input class="form-check-input" type="checkbox" value="1" name = "includetaxonomy" id="includetaxonomy">
+              <label class="form-check-label" for="includetaxonomy">
+                Include taxa names in result
+              </label>
+            </div>
+          </div>
+          <div class="row m-4">
+            <div class="col-sm">
+              <button class="btn btn-success rounded-0" id="accessionsubmit" type="submit">Get sequences</button>
+            </div>
+          </div>
+        </form>
+
+        <form id="tree" method="post" style="display:none;">
+          <!-- style="display:none;" -->
+          <div class="row m-4">
+            <h4>2. Select parameters for phylogenetic inference:</h4>
+          </div>
+          <div class="row m-4">
+            <h6>Alignment method:</h6>
+            <div class="input-group col-4">
+              <select class="form-control" name="alignmethod" id="alignmethod">
+                <option value="clustalo" selected>Clustal Omega</option>
+                <option value="mafft">MAFFT</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group row m-4" id="jobcontainer" style="display:none;">
+            <label for="jobid" class="col-sm-2 col-form-label">Job ID:</label>
+            <div class="col-sm-4">
+              <input type="text" readonly class="form-control-plaintext" name="jobid" id="jobid" value="">
+            </div>
+          </div>
+          <div class="row m-4">
+            <h6>Outgroup:</h6>
+            <div class="input-group col-4">
+              <select class="form-control" id="outgroup" name="outgroup">
+                <option selected value="None")>None</option>
+              </select>
+            </div>
+          </div>
+          <div class="row m-4" id="nuccontainer" style="display:none;">
+            <h6>Substitution model:</h6>
+            <div class="input-group col-4">
+              <div class="input-group-prepend">
+                <label class="input-group-text" for="submodel">Nucleotideubstitution model</label>
+              </div>
+              <!-- Nucleotides -->
+              <select class="form-control" id="nuclsubmodel" name="nuclsubmodel">
+                <option value="GTRCAT">GTRCAT</option>
+                <option value="GTRCATI">GTRCATI</option>
+                <option value="ASC_GTRCAT">ASC_GTRCAT</option>
+                <option value="GTRGAMMA">GTRGAMMA</option>
+                <option value="ASC_GTRGAMMA">ASC_GTRGAMMA</option>
+                <option value="GTRGAMMAI">GTRGAMMAI</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row m-4" id="protcontainer" style="display:none;">
+            <h6>Substitution model:</h6>
+            <div class="input-group col-4">
+              <div class="input-group-prepend">
+                <label class="input-group-text" for="submodel">Protein substitution model</label>
+              </div>
+              <!-- proteins -->
+              <select class="form-control" id="protsubmodel" name="protsubmodel">
+                <option value="PROTCAT">PROTCAT</option>
+                <option value="PROTCATI">PROTCATI</option>
+                <option value="ASC_PROTCAT">ASC_PROTCAT</option>
+                <option value="PROTGAMMA">PROTGAMMA</option>
+                <option value="ASC_PROTGAMMA">ASC_PROTGAMMA</option>
+                <option value="PROTGAMMAI">PROTGAMMAI</option>
+              </select>
+            </div><br>
+            <div class="input-group col-4">
+              <div class="input-group-prepend">
+                <label class="input-group-text" for="submodel">Aminoacid substitution model</label>
+              </div>
+              <select class="form-control" id="aasubmodel" name="aasubmodel">
+                <option value="DAYHOFF">DAYHOFF</option>
+                <option value="DCMUT">DCMUT</option>
+                <option value="JTT">JTT</option>
+                <option value="MTREV">MTREV</option>
+                <option value="WAG">WAG</option>
+                <option value="RTREV">RTREV</option>
+                <option value="CPREV">CPREV</option>
+                <option value="VT">VT</option>
+                <option value="BLOSUM62" selected>BLOSUM62</option>
+                <option value="MTMAM">MTMAM</option>
+                <option value="LG">LG</option>
+                <option value="MTART">MTART</option>
+                <option value="MTZOA">MTZOA</option>
+                <option value="PMB">PMB</option>
+                <option value="HIVB">HIVB</option>
+                <option value="HIVW">HIVW</option>
+                <option value="JTTDCMUT">JTTDCMUT</option>
+                <option value="FLU">FLU</option>
+                <option value="STMTREV">STMTREV</option>
+                <option value="DUMMY">DUMMY</option>
+                <option value="DUMMY2">DUMMY2</option>
+                <option value="AUTO">AUTO</option>
+                <option value="LG4M">LG4M</option>
+                <option value="LG4X">LG4X</option>
+                <option value="PROT_FILE">PROT_FILE</option>
+                <option value="GTR_UNLINKED">GTR_UNLINKED</option>
+                <option value="GTR">GTR</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row m-4" id="seedcontainer">
+            <h6>Enter a random seed (This number needs to stay consistent, for reproducibility purposes)</h6>
+            <div class="col-sm-2">
+              <input type="number" class="form-control" name="seed" id="jobid" value="12345" min="1">
+            </div>
+          </div>
+
+          <div class="row m-4">
+            <div class="col-sm">
+              <button class="btn btn-success rounded-0" id="treesubmit" type="submit">Align and infer tree</button>
+            </div>
+          </div>
+
+        </form>
+        <div id="loading" class="row m-4" style="display:none;">
+          <div class="text-center">
+            <div class="spinner-border text-success" role="status"></div>
+            <p id="loadingmessage"></p>
+          </div>
+        </div>
+        <div id="results" class="row m-4" style="display:none;">
+          <div class="col-12">
+            <a id="resultslink" class="btn btn-success rounded-0 btn-block" href="/" role="button" style="width:100%;">Go to results page</a>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script>
+
+      $(document).ready(function(){
+        // Handling submit of accession form
+        $("#accession").submit(function(e){
+          e.preventDefault(e);
+          $("#accessionNumbers").attr('readonly', 'true');
+          $("#seqtype").attr('readonly', 'true');
+          $("#includetaxonomy").attr('readonly');
+          $("#accessionsubmit").addClass('disabled');
+          $("#loadingmessage").html("Loading sequences from Entrez...")
+          $("#loading").show();
+
+          $.post("/fetchsequences", $(this).serialize())
+          .done(function(data){
+            if(data.valid){
+              console.log(data);
+              $('#jobid').val(data.result);
+              $('#jobcontainer').show();
+              if (data.seqids.length > 0){
+                for (i = 0; i < data.seqids.length; i++) {
+                  $('#outgroup').append('<option value="'+data.seqids[i]+'">'+data.seqids[i]+'</option>');
+                }
+              }
+              if ($('#seqtype').val()=="nucleotide"){
+                $('#nuccontainer').show();
+              }
+              else{
+                $('#protcontainer').show();
+              }
+              $('#tree').show(500);
+              $("#loading").hide();
+            }
+            else { //Fail and reload
+              alert(data.result);
+              location.reload();
+            }
+
+          });
+        });
+
+        //Handling submission of tree
+        $("#tree").submit(function(e){
+          e.preventDefault(e);
+          $("#outgroup").attr('readonly', 'true');
+          if ($('#seqtype').val()=="nucleotide"){
+            $("#protsubmodel").attr('readonly', 'true');
+            $("#protsubmodel").attr('readonly', 'true');
+            $("#protsubmodel").attr('disabled', 'true');
+            $("#aasubmodel").attr('disabled', 'true');
+          }
+          else {
+            $("#nuclsubmodel").attr('readonly', 'true');
+            $("#nuclsubmodel").attr('disabled', 'true');
+          }
+          $("#seed").attr('readonly', 'true');
+          $("#loadingmessage").html("Aligning and creating phylogenetic tree...")
+          $("#loading").show();
+          $("#treesubmit").addClass('disabled');
+          $.post("/gettree", $(this).serialize())
+          .done(function(data){
+            if(data.valid){
+              $("#loading").hide();
+              $("#resultslink").attr("href", "/results/"+data.result);
+              $("#results").show();
+            }
+            else { //Fail and reload
+              alert(data.result);
+              location.reload();
+            }
+          });
+        });
+
+      });
+
+
+      </script>
+  </body>
+</html>

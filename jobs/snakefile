@@ -1,0 +1,35 @@
+# Julio Ayala
+# 2021.03.09
+# Snakefile - fasta sequences to tre
+
+import pandas as pd
+parameters = (pd.read_csv(config['dir']+'/params.tsv',
+  sep='\t',
+  dtype={'seed':str, 'outgroup':str, 'submodel':str}))
+
+rule all:
+	input:
+		expand('{sample}/RAxML_result.tree.tre', sample=config['dir'])
+
+rule align:
+	input:
+		expand('{sample}/sequences.fasta', sample=config['dir'])
+	output:
+		'{sample}/alignment.fasta'
+	run:
+		if parameters.iloc[0].alignmethod == 'clustalo':
+			shell('clustalo -i {input} -o {output}')
+		else:
+			shell('mafft {input} > {output}')
+
+
+rule infertree:
+	input:
+		expand('{sample}/alignment.fasta', sample=config['dir'])
+	output:
+		'{sample}/RAxML_result.tree.tre'
+	run:
+		if parameters.iloc[0].outgroup == 'None':
+			shell('raxmlHPC -s {input} -n tree.tre -m {parameters.iloc[0].submodel} -p {parameters.iloc[0].seed} -T 4 -w $(echo $(pwd)/{wildcards.sample})')
+		else:
+			shell('raxmlHPC -s {input} -n tree.tre -m {parameters.iloc[0].submodel} -p {parameters.iloc[0].seed} -o {parameters.iloc[0].outgroup} -T 4 -w $(echo $(pwd)/{wildcards.sample})')
