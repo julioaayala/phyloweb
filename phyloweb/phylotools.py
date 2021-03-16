@@ -4,6 +4,10 @@ import time
 import uuid
 import os
 
+## Julio Ayala
+## 2021.03.09
+## Toolbox of functions for phylogenetic tree inference.
+
 def getEntrezRecord(id, db):
     ## Get an entrez record given an accession number(id) and a database (nucleotide or protein)
     handle = Entrez.efetch(db=db, id=id, retmode="xml")
@@ -12,6 +16,7 @@ def getEntrezRecord(id, db):
     return record
 
 def getSequences(accessionNumbers, db, includetaxonomy = False):
+    ## Function to get sequences based on a list of accession numbers
     Entrez.email ="ayala.j@live.com" ## Set an Entrez email for the query
     records = {}
     for line in accessionNumbers: ## Iterate through accesion numbers and get their sequences, if they exist
@@ -57,6 +62,7 @@ def saveFasta(records): ## Saves a fasta file given a dictionary of sequences.
     for i,j in records.items(): ## Validate if sequences are valid, otherwise, return an error.
         if j=='NA':
             return 'Error: '+i+' is an invalid accession number. Please validate'
+
 
     try:
         os.mkdir('jobs/'+jobid) ## Create folder, file and write sequences.

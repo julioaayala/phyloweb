@@ -1,5 +1,5 @@
 from setuptools import setup
-
+## Setup of the app
 setup(
     name='phyloweb',
     packages=['phyloweb'],
