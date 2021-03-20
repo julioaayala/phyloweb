@@ -31,22 +31,29 @@ Finally, run the app with:
 flask run
 ```
 
+**Note**: In order to rerun the app, you need to set the environment variables and run flask once in the environment:
+```bash
+export FLASK_APP=phyloweb
+export FLASK_ENV=development
+flask run
+```
+
 The app will be served at localhost in port 5000 (http://127.0.0.1:5000).
 
 ## Usage
 The input page of the website has the following interface:
 
 ![](phyloweb/static/sample1.png)
-The sequences used in this sample correspond to the Cytochrome P450 protein present in arthropods. Accession numbers for the sample are the following:
+
+The sequences used in this sample correspond to one of the potassium channels in Diptera, using a beetle (XP_018335414.1) as outgroup. Accession numbers for the sample are the following:
 ```
-KAF8797238.1
-ABS31131.1
-EDS45242.1
-AAC47424.1
-PBC34359.1
-ADY62482.1
-AAG36792.1
-AHJ59371.1
+XP_029726307.1
+XP_035911771.1
+XP_035911769.1
+XP_021695816.1
+XP_036219060.1
+XP_022231231.1
+XP_018335414.1
 ```
 
 Settings are the following:
@@ -54,10 +61,10 @@ Settings are the following:
 Sequence type: Protein
 Include taxa names in result
 Alignment method: Clustal Omega
-Outgroup: KAF8797238.1
-Protein substitution model: PROTGAMMA
+Outgroup: XP_018335414.1
+Protein substitution model: PROTGAMMAI
 Aminoacid substitution model: BLOSUM62
-Random seed: 11111
+Random seed: 1337
 ```
 
 Once processed, the results can be visualized and downloaded in a new page:
